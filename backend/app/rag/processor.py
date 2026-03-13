@@ -1,4 +1,3 @@
-
 import hashlib
 from pathlib import Path
 from typing import List, Tuple
@@ -32,8 +31,11 @@ class DocumentProcessor:
     def load(self, file_path: str) -> List[Document]:
         ext = Path(file_path).suffix.lower()
         if ext not in SUPPORTED_EXTENSIONS:
-            raise ValueError(f"Unsupported file type: {ext}")
-        loader = SUPPORTED_EXTENSIONS[ext](file_path)
+            raise ValueError(
+                f"Unsupported file type: {ext}. Supported: {list(SUPPORTED_EXTENSIONS.keys())}"
+            )
+        loader_cls = SUPPORTED_EXTENSIONS[ext]
+        loader = loader_cls(file_path)
         return loader.load()
 
     def process(self, file_path: str, original_filename: str) -> Tuple[List[Document], str]:

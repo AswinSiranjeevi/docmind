@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     groq_api_key: str
     chroma_persist_dir: str = "./chroma_db"
     upload_dir: str = "./uploads"
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_model: str = "all-MiniLM-L6-v2"
     llm_model: str = "llama-3.3-70b-versatile"
     chunk_size: int = 1000
     chunk_overlap: int = 200
