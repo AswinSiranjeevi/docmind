@@ -7,7 +7,6 @@ from langchain_community.document_loaders import (
     PyPDFLoader,
     TextLoader,
     Docx2txtLoader,
-    UnstructuredMarkdownLoader,
 )
 from langchain.schema import Document
 
@@ -16,7 +15,7 @@ SUPPORTED_EXTENSIONS = {
     ".pdf": PyPDFLoader,
     ".txt": TextLoader,
     ".docx": Docx2txtLoader,
-    ".md": UnstructuredMarkdownLoader,
+    ".md": TextLoader,  # treat markdown as plain text
 }
 
 

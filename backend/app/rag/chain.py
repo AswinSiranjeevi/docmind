@@ -11,7 +11,7 @@ SYSTEM_PROMPT = """You are an expert document analyst. Answer questions based ON
 
 Rules:
 - Be precise and cite specific parts of the documents
-- If the answer is not in the context, say "I couldn't find this in the uploaded documents."
+- If the answer isn't in the context, say "I couldn't find this in the uploaded documents."
 - Format responses clearly with markdown when helpful
 - Always be factual — never hallucinate information
 
@@ -25,7 +25,6 @@ class RAGChain:
         self.vector_store = vector_store
         self.retrieval_k = retrieval_k
 
-        # Free Llama 3.3 70B via Groq
         self.llm = ChatGroq(
             model=llm_model,
             groq_api_key=groq_api_key,
@@ -55,7 +54,7 @@ class RAGChain:
         return docs_with_scores, context
 
     async def stream(self, query: str) -> AsyncGenerator[str, None]:
-        _, context = self.retrieve(query)
+        docs_with_scores, context = self.retrieve(query)
         chain = self.prompt | self.llm | StrOutputParser()
         async for chunk in chain.astream({"context": context, "question": query}):
             yield chunk
