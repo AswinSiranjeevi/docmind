@@ -1,0 +1,78 @@
+:root {
+  --bg:        #0c0c10;
+  --bg-2:      #13131a;
+  --bg-3:      #1c1c27;
+  --bg-4:      #242433;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(99,179,237,0.4);
+  --text-1:    #eeeaf8;
+  --text-2:    #8b87a8;
+  --text-3:    #4a4666;
+  --accent:    #63b3ed;
+  --accent-lo: rgba(99,179,237,0.1);
+  --green:     #68d391;
+  --yellow:    #f6e05e;
+  --red:       #fc8181;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --r:         10px;
+  --r-sm:      6px;
+  --ease:      0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(99,179,237,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 90%, rgba(104,211,145,0.03) 0%, transparent 50%);
+  pointer-events:none; z-index:0;
+}
+
+#root { position:relative; z-index:1; height:100vh; display:flex; flex-direction:column; }
+
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--bg-4); border-radius:2px; }
+
+/* Markdown */
+.md h1,.md h2,.md h3 { font-family:var(--font-head); margin:.8rem 0 .3rem; }
+.md p { margin:.4rem 0; }
+.md ul,.md ol { padding-left:1.4rem; margin:.4rem 0; }
+.md li { margin:.2rem 0; }
+.md code {
+  font-family:var(--font-mono); font-size:.82em;
+  background:var(--bg-3); padding:.1em .35em;
+  border-radius:4px; color:var(--accent);
+}
+.md pre {
+  background:var(--bg-3); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:.8rem 1rem;
+  overflow-x:auto; margin:.6rem 0;
+}
+.md pre code { background:none; padding:0; color:var(--text-1); }
+.md strong { color:var(--text-1); font-weight:600; }
+.md em { color:var(--text-2); }
+.md blockquote {
+  border-left:2px solid var(--accent); padding-left:.8rem;
+  margin:.6rem 0; color:var(--text-2); font-style:italic;
+}
+
+@keyframes fadeUp   { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes slideIn  { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
