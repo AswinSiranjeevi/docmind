@@ -1,9 +1,12 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+import secrets
 
 
 class Settings(BaseSettings):
     groq_api_key: str
+    app_api_key: str = secrets.token_urlsafe(32)  # auto-generated if not set
+    jwt_secret: str = secrets.token_urlsafe(64)
     chroma_persist_dir: str = "./chroma_db"
     upload_dir: str = "./uploads"
     embedding_model: str = "all-MiniLM-L6-v2"

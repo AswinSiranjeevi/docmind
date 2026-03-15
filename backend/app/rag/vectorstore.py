@@ -1,26 +1,25 @@
 import os
 from typing import List, Tuple
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
 
 class VectorStore:
-    def __init__(self, persist_dir: str, embedding_model: str):
+    def __init__(self, persist_dir: str, embedding_model: str, **kwargs):
         self.persist_dir = persist_dir
         os.makedirs(persist_dir, exist_ok=True)
 
-        # Free local embeddings — no API key, runs on CPU
+        # Free local embeddings — no API key needed
         self.embeddings = HuggingFaceEmbeddings(
             model_name=embedding_model,
             model_kwargs={"device": "cpu"},
             encode_kwargs={"normalize_embeddings": True},
         )
-
         self.db = Chroma(
             persist_directory=persist_dir,
             embedding_function=self.embeddings,
-            collection_name="docmind",
+            collection_name="rag_documents",
         )
 
     def add_documents(self, documents: List[Document]) -> List[str]:

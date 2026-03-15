@@ -2,78 +2,110 @@ import { useState, useEffect } from 'react'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-const EXT_ICON = { pdf:'📄', docx:'📋', txt:'📝', md:'📌' }
-const icon = (name) => EXT_ICON[name.split('.').pop()] || '📄'
-
-export default function DocumentList({ refresh }) {
+export default function DocumentList({ refreshTrigger, token }) {
   const [docs, setDocs] = useState([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(null)
 
-  const fetch_ = async () => {
+  const fetchDocs = async () => {
     try {
-      const r = await fetch(`${API}/api/documents`)
-      const d = await r.json()
-      setDocs(d.documents || [])
-    } catch {}
-    finally { setLoading(false) }
+      const res = await fetch(`${API}/api/documents`, { headers: { Authorization: `Bearer ${token}` } })
+      const data = await res.json()
+      setDocs(data.documents || [])
+    } catch (err) {
+      console.error('Failed to fetch docs', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  useEffect(() => { fetch_() }, [refresh])
+  useEffect(() => { fetchDocs() }, [refreshTrigger])
 
-  const del = async (id) => {
-    setDeleting(id)
+  const handleDelete = async (docId) => {
+    setDeleting(docId)
     try {
-      await fetch(`${API}/api/documents/${id}`, { method:'DELETE' })
-      setDocs(p => p.filter(d => d.doc_id !== id))
-    } catch {}
-    finally { setDeleting(null) }
+      await fetch(`${API}/api/documents/${docId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+      setDocs(prev => prev.filter(d => d.doc_id !== docId))
+    } catch (err) {
+      console.error('Delete failed', err)
+    } finally {
+      setDeleting(null)
+    }
   }
 
-  if (loading) return <div style={{ color:'var(--text-3)', fontSize:12 }}>Loading…</div>
+  if (loading) return (
+    <div style={{ color: 'var(--text-muted)', fontSize: '12px', padding: '8px 0' }}>Loading...</div>
+  )
 
-  if (!docs.length) return (
+  if (docs.length === 0) return (
     <div style={{
-      border:'1px dashed var(--border)', borderRadius:'var(--r-sm)',
-      padding:'18px', textAlign:'center',
-      color:'var(--text-3)', fontSize:12,
+      color: 'var(--text-muted)',
+      fontSize: '12px',
+      textAlign: 'center',
+      padding: '20px',
+      border: '1px dashed var(--border)',
+      borderRadius: 'var(--radius-sm)',
     }}>
       No documents yet
     </div>
   )
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       {docs.map((doc, i) => (
-        <div key={doc.doc_id} style={{
-          display:'flex', alignItems:'center', gap:8,
-          padding:'9px 11px',
-          background:'var(--bg-2)',
-          border:'1px solid var(--border)',
-          borderRadius:'var(--r-sm)',
-          animation:`slideIn .2s ease ${i*.04}s both`,
-        }}>
-          <span style={{ fontSize:15, flexShrink:0 }}>{icon(doc.source_file)}</span>
-          <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontSize:12, fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+        <div
+          key={doc.doc_id}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '10px 12px',
+            background: 'var(--bg-2)',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--border)',
+            animation: `slideIn 0.2s ease ${i * 0.05}s both`,
+          }}
+        >
+          <span style={{ fontSize: '16px' }}>
+            {doc.source_file.endsWith('.pdf') ? '📄' :
+             doc.source_file.endsWith('.docx') ? '📋' :
+             doc.source_file.endsWith('.md') ? '📌' : '📝'}
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 500,
+              color: 'var(--text-primary)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
               {doc.source_file}
             </div>
-            <div style={{ fontSize:11, color:'var(--text-3)', fontFamily:'var(--font-mono)' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
               {doc.total_chunks} chunks
             </div>
           </div>
           <button
-            onClick={() => del(doc.doc_id)}
+            onClick={() => handleDelete(doc.doc_id)}
             disabled={deleting === doc.doc_id}
             style={{
-              background:'none', border:'none', cursor:'pointer',
-              color:'var(--text-3)', fontSize:13, padding:4,
-              borderRadius:4, transition:'color var(--ease)',
-              opacity: deleting === doc.doc_id ? .4 : 1,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--text-muted)',
+              fontSize: '14px',
+              padding: '4px',
+              borderRadius: '4px',
+              transition: 'color var(--transition)',
+              opacity: deleting === doc.doc_id ? 0.5 : 1,
             }}
-            onMouseEnter={e => e.target.style.color='var(--red)'}
-            onMouseLeave={e => e.target.style.color='var(--text-3)'}
-          >✕</button>
+            onMouseEnter={e => e.target.style.color = 'var(--error)'}
+            onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
+            title="Remove document"
+          >
+            ✕
+          </button>
         </div>
       ))}
     </div>

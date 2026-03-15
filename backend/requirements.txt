@@ -1,21 +1,16 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-pydantic-settings==2.5.2
-python-multipart==0.0.12
-
-# LangChain ecosystem (newer versions support numpy 2.x + Python 3.13)
-langchain==0.3.20
-langchain-groq==0.3.2
-langchain-huggingface==0.1.2
-langchain-chroma==0.2.2
-langchain-community==0.3.19
-
-# Embeddings (local, free)
-sentence-transformers==3.4.1
-
-# Document loaders
-pypdf==4.3.1
-docx2txt==0.8
-
-# Vector store
-chromadb==0.6.3
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-multipart
+langchain
+langchain-groq
+langchain-huggingface
+langchain-chroma
+langchain-community
+sentence-transformers
+pypdf
+docx2txt
+chromadb
+PyJWT
+slowapi
+langchain-text-splitters
